@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+
+
+{% block page_title %}
+    <h4 class="text-light">Edit Subject {{subject.staff.id}} {{subject.subject_name}}</h4>
+{% endblock page_title %}
+
+{% block maincontent %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-primary alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        {% endfor %}
+    {% endif %}
+    <div class="card p-2 m-3">
+        <div class="card-title text-light text-center bg-primary">
+            <h4>Edit Subject</h4>
+        </div>
+        <div class="card-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {{field.label_tag}}{{field.error | striptags}}
+                    {{field}}
+                {% endfor %}
+                <label for="id_staff">Faculty</label>
+                <select name="staff" id="id_staff" class="form-control">
+                    {% for staff in staffs %}
+                        <option value="{{staff.admin.id}}" {% if staff.admin.id == subject.staff.id %} selected {% endif %}>{{staff}}</option>
+                    {% endfor %}
+                    
+                </select>
+                <input type="submit" value="Update Subject" class="btn btn-primary form-control mt-2">
+            </form>
+        </div>
+    </div>
+    
+    
+
+{% endblock maincontent %}

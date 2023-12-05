@@ -1,0 +1,45 @@
+{% extends "core/base.html" %}
+
+
+{% block maincontent %}
+    <h3 class="text-black">Manage Students</h3>
+    <button type="button" class="btn btn-warning fw-bold">
+        Total Students Count <span class="badge badge-danger text-danger">{{students_count}}</span>
+    </button>
+
+    <table class="table table-hover table-stripped mt-1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email/username</th>
+                <th>Gender</th>
+                <th>Course</th>
+                <th>Date joined</th>
+                <th>Last Login</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{student.id}}</td>
+                    <td>{{student.first_name}}</td>
+                    <td>{{student.last_name}}</td>
+                    <td>{{student.email}}</td>
+                    <td>{{student.students.gender}}</td>
+                    <td>{{student.students.course.course_name}}</td>
+                    <td>{{student.date_joined|date}}</td>
+                    <td>{{student.last_login}}</td>
+                    <td>{{student.students.address}}</td>
+                    <td>
+                        <a href="{% url 'edit_student' student.id %}" class="btn btn-sm d-inline-flex btn-warning">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock maincontent %}

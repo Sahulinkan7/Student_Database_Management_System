@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'core/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/core.css' %}">
+    <script src="{% static 'core/js/jquery.js' %}"></script>
+    <script src="https://kit.fontawesome.com/b8a169592b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 col-sm-2 col-auto bg-dark sidebar">
+                {% include "core/sidebar.html" %}
+            </div>
+
+            <div class="offset-sm-2 offset-md-2 col-md-10 col-sm-10 col-auto">
+                <div class="row bg-light">
+                    <div class="col-sm-6">
+                        {% if request.user.user_type == '1' %}
+                            <h4>Student Management System Admin</h4>
+                        {% endif %}
+                        {% if request.user.user_type == '2' %}
+                            <h4>Student Management System Staff</h4>
+                        {% endif %}
+                        {% if request.user.user_type == '3' %}
+                            <h4>Student Management System Student</h4>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="{% url 'logout' %}" class="float-sm-end text-dark text-decoration-none">logout</a>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-sm-6">
+                        {% block page_title %}
+                        {% endblock page_title %}
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="#" class="float-sm-end text-light text-decoration-none">Dashboard</a>
+                    </div>
+                </div>
+                {% block maincontent %}
+                
+                {% endblock maincontent %}
+            </div>
+        </div>
+    </div>
+    {% block custom_js %}
+    
+    {% endblock custom_js %}
+    <footer class="footer"></footer>
+    <script src="{% static 'core/js/jquery.js' %}"></script>
+    <script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+    
+</body>
+</html>

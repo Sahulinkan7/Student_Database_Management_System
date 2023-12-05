@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+
+{% block maincontent %}
+<div class="card p-4 m-5">
+    <div class="card-title bg-success">
+        <h3 class="text-center text-white">Add Staff</h3>
+    </div>
+    <div class="card-body">
+        <form action="" method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                {{field.label_tag}} {{field.errors | striptags}}
+                {{field}}
+            {% endfor %}
+            <input type="submit" class="form-control btn btn-primary mt-2" value="Add Staff">
+        </form>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-primary alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+</div>
+
+
+
+{% endblock maincontent %}

@@ -1,0 +1,99 @@
+{% load static %}
+<div class="text-center">
+    <img src="" class="img-fluid rounded-circle mt-5" alt="ProfilePic" width="100px" height="100px">
+    <h5 class="text-white">{{request.user.first_name}} {{request.user.last_name}}</h5>
+</div>
+<hr class="border-light">
+
+<ul class="navbar-nav ms-2 ps-1">
+    <li class="nav-item">
+        <a href="#" class="nav-link ps-2 {% if '/dashboard/' in request.path %} active {% endif %}">
+            <i class="fas fa-laptop-house"></i> Dashboard
+        </a>            
+    </li>
+    {% if request.user.user_type == '2' %}
+        <li class="nav-item">
+            <a href="{% url 'take_student_attendance' %}" class="nav-link ps-2 {% if '/take_student_attendance/' in request.path %} active {% endif %}">
+                Take Student Attendance
+            </a>            
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link ps-2 {% if '#' in request.path %} active {% endif %}">
+                View and Update Student Attendance
+            </a>            
+        </li>
+    {% endif %}
+    {% if request.user.user_type == '1' %}
+        
+        <li class="nav-item">
+            <a href="{% url 'add_course' %}" class="nav-link  ps-2 {% if request.path == '/addcourse/' %} active {% endif %}">
+                Add Course
+            </a> 
+        </li>
+        
+        <li class="nav-item">
+            <a href="{% url 'manage_courses' %}" class="nav-link ps-2 {% if '/manage_courses/' in request.path %} active {% endif %}">Manage Course</a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'add_subject' %}" class="nav-link ps-2 {% if '/addsubject/' in request.path %} active {% endif %}">
+                Add Subject
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'manage_subjects' %}" class="nav-link ps-2 {% if '/manage_subjects/' in request.path %} active {% endif %}">
+                Manage Subjects
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'manage_sessions' %}" class="nav-link ps-2 {% if '/manage_sessions/' in request.path %} active {% endif %}">
+                Manage Sessions
+            </a>
+        </li>               
+        <li class="nav-item">
+            <a href="" class="nav-link  ps-2 {% if '/ds/' in request.path %} active {% endif %}">
+                Attendance Report
+            </a>
+        </li> 
+        <li class="nav-item">
+            <div class="nav-link ps-2 {% if '/addstudent/' in request.path  %} active {% endif %} {% if '/manage_students/' in request.path %} active {% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#managestudentcollapse" aria-expanded="false" aria-controls="managestudentcollapse">
+                Manage Students <i class="fa fa-solid fa-caret-down"></i> 
+            </div>
+            <div class="collapse" id="managestudentcollapse">
+                <a href="{% url 'add_student' %}" class="nav-link ps-2 {% if '/addstudent/' in request.path %} active {% endif %}">Add Student</a>
+                <a href="{% url 'manage_students' %}" class="nav-link ps-2 {% if '/manage_students/' in request.path %} active {% endif %}">Manage Student</a>
+            </div>
+        </li>
+        <li class="nav-item">
+            <div class="nav-link ps-2 {% if '/addstaff/' in request.path %} active {% endif %} {% if '/manage_staffs/' in request.path %} active {% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#managestaffcollapse" aria-expanded="false" aria-controls="managestaffcollapse">
+                Manage Staffs <i class="fa fa-solid fa-caret-down"></i> 
+            </div>
+            <div class="collapse" id="managestaffcollapse">
+                <a href="{% url 'add_staff' %}" class="nav-link ps-2 {% if '/addstaff/' in request.path %} active {% endif %}">Add Staff</a>
+                <a href="{% url 'manage_staffs' %}" class="nav-link ps-2 {% if '/manage_staffs/' in request.path %} active {% endif %}">Manage Staffs</a>
+            </div>
+        </li>
+        <li class="nav-item">
+            <div class="nav-link ps-2" type="button" data-bs-toggle="collapse" data-bs-target="#LeaveCollapse" aria-expanded="false" aria-controls="LeaveCollapse">
+                Leave <i class="fa fa-solid fa-caret-down"></i> 
+            </div>
+            <div class="collapse" id="LeaveCollapse">
+                <a href="" class="nav-link ps-2 {% if '/addstaff/' in request.path %} active {% endif %}">Student Leave</a>
+                <a href="" class="nav-link ps-2 ">Staff Leave</a>
+            </div>
+        </li>
+        <li class="nav-item">
+            <div class="nav-link ps-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Feedback <i class="fa fa-solid fa-caret-down"></i> 
+            </div>
+            <div class="collapse" id="collapseExample">
+                <a href="" class="nav-link ps-2">Student Feedback</a>
+                <a href="" class="nav-link ps-2">Staff Feedback</a>
+            </div>
+        </li>
+    {% endif %}
+    <li class="nav-item">
+        <a href="{% url 'logout' %}" class="nav-link ps-2">logout</a>
+    </li>
+</ul>
+
+    

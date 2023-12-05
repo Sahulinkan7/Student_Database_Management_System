@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+
+
+{% block maincontent %}
+    <h3 class="text-black">Manage Courses</h3>
+    <button type="button" class="btn btn-warning fw-bold">
+        Total Course Count <span class="badge badge-danger text-danger">{{course_count}}</span>
+    </button>
+
+    <table class="table table-hover table-stripped mt-1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Course Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses_list %}
+                <tr>
+                    <td>{{course.id}}</td>
+                    <td>{{course.course_name}}</td>
+                    <td>
+                        <a href="{% url 'edit_course' course.id %}" class="btn btn-sm d-inline-flex btn-warning">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock maincontent %}

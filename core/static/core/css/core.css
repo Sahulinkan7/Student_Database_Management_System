@@ -1,0 +1,56 @@
+body,html{
+    height: 100%;
+    background-color: rgb(15, 139, 129);
+}
+.container-fluid{
+    min-height: 100%;
+}
+.cardlogin{
+    background-color: rgb(15, 139, 129);
+    border: 0;
+}
+
+label{
+    font-weight: bold;
+}
+
+.alert-success{
+    background-color: green;
+    color:white;
+}
+
+.alert-error{
+    background-color: rgb(175, 46, 46);
+    color: white;
+}
+
+.sidebar{
+    min-height: 100%;
+    position: fixed;
+    overflow-y: scroll;
+    bottom:0;
+    top:0;
+}
+
+.nav-link{
+    color: rgb(15, 139, 129);
+    font-weight: bold;
+
+}
+
+.errors{
+    color:rgb(122, 16, 16);
+    font-weight: 700;
+}
+.active{
+    background: rgb(15, 139, 129);
+    color:white;
+    font-weight: bold;
+}
+.nav-link:hover{
+    color: rgb(231, 240, 239);
+    background-color: rgb(15, 139, 129);
+    font-weight: bold;
+    z-index: 999;
+    
+}

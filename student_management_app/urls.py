@@ -22,5 +22,6 @@ urlpatterns = [
     path("save_student_attendance/",staff_views.save_attendance_data,name="save_student_attendance"),
     path("staff_leave_apply",staff_views.staff_leave,name="staff_leave_apply"),
     path("staff_feedback/",staff_views.staff_feedback,name="staff_feedback"),
+    path("view_my_attendance/",student_views.show_my_attendance,name="student_view_attendance"),
     path("logout/",views.logout_view,name="logout"),
 ]

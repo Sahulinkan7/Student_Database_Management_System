@@ -7,10 +7,17 @@
 
 <ul class="navbar-nav ms-2 ps-1">
     <li class="nav-item">
-        <a href="#" class="nav-link ps-2 {% if '/dashboard/' in request.path %} active {% endif %}">
+        <a href="{% url 'dashboard_view' %}" class="nav-link ps-2 {% if '/dashboard/' in request.path %} active {% endif %}">
             <i class="fas fa-laptop-house"></i> Dashboard
         </a>            
     </li>
+    {% if request.user.user_type == '3' %}
+        <li class="nav-item">
+            <a href="{% url 'student_view_attendance' %}" class="nav-link ps-2 {% if '/view_my_attendance/' in request.path %} active {% endif %}">
+                View My Attendance
+            </a>            
+        </li>
+    {% endif %}
     {% if request.user.user_type == '2' %}
         <li class="nav-item">
             <a href="{% url 'take_student_attendance' %}" class="nav-link ps-2 {% if '/take_student_attendance/' in request.path %} active {% endif %}">

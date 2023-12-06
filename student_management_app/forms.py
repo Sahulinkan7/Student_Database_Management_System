@@ -65,7 +65,7 @@ class AddstaffForm(forms.Form):
     first_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     last_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     email=forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control'}))
-    address=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    address=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
     
 class AddCourseForm(forms.ModelForm):
     course_name=forms.CharField(max_length=100,widget=forms.TextInput(attrs=({'class':'form-control','placeholder':'Enter course name'})))
@@ -80,7 +80,7 @@ class AddStudentForm(forms.Form):
     course=forms.ChoiceField(choices=COURSE_CHOICE,widget=forms.Select(attrs={'class':'form-control'}))
     gender=forms.ChoiceField(choices=GENDER,widget=forms.Select(attrs={'class':'form-control'}))
     session_year=forms.ChoiceField(choices=SESSION_CHOICE,widget=forms.Select(attrs={'class':'form-control'}))
-    address=forms.CharField(max_length=255,widget=forms.Textarea(attrs={'class':'form-control'}))
+    address=forms.CharField(max_length=255,widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
     
     
 class AddSubjectForm(forms.Form):
@@ -94,7 +94,7 @@ class EditStaffForm(forms.ModelForm):
     first_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     last_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     email=forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control'}))
-    address=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    address=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
     class Meta:
         model=CustomUser
         fields=['username','first_name','last_name','email']
@@ -108,7 +108,7 @@ class EditStudentForm(forms.ModelForm):
     session_year=forms.ChoiceField(choices=SESSION_CHOICE,widget=forms.Select(attrs={'class':'form-control'}))
     course=forms.ChoiceField(choices=COURSE_CHOICE,widget=forms.Select(attrs={'class':'form-control'}))
     gender=forms.ChoiceField(choices=GENDER,widget=forms.Select(attrs={'class':'form-control'}))
-    address=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    address=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
     class Meta:
         model=CustomUser
         fields=['first_name','last_name','email','username']
@@ -128,9 +128,15 @@ class EditSubjectForm(forms.ModelForm):
         
 class LeaveForm(forms.Form):
     date=forms.DateField(widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
-    reason=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
-    
-    
+    reason=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
     
 class FeedbackForm(forms.Form):
-    feedback_message=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    feedback_message=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
+    
+    
+class AttendanceCheckForm(forms.Form):
+    start_date=forms.DateField(widget=forms.DateInput(attrs={'class':'form-control form-control-sm','type':'date'}))
+    end_date=forms.DateField(widget=forms.DateInput(attrs={'class':'form-control form-control-sm','type':'date'}))
+    subject=forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control form-control-sm'}))
+    
+    

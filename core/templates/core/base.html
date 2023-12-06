@@ -42,7 +42,7 @@
                         {% endblock page_title %}
                     </div>
                     <div class="col-sm-6">
-                        <a href="#" class="float-sm-end text-light text-decoration-none">Dashboard</a>
+                        <a href="{% url 'dashboard_view' %}" class="float-sm-end text-light text-decoration-none">Dashboard</a>
                     </div>
                 </div>
                 {% block maincontent %}

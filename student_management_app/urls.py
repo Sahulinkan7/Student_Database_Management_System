@@ -20,5 +20,7 @@ urlpatterns = [
     path("take_student_attendance/",staff_views.take_attendance,name="take_student_attendance"),
     path("get_students/",staff_views.get_students,name="get_students"),
     path("save_student_attendance/",staff_views.save_attendance_data,name="save_student_attendance"),
+    path("staff_leave_apply",staff_views.staff_leave,name="staff_leave_apply"),
+    path("staff_feedback/",staff_views.staff_feedback,name="staff_feedback"),
     path("logout/",views.logout_view,name="logout"),
 ]

@@ -125,3 +125,12 @@ class EditSubjectForm(forms.ModelForm):
         fields=['subject_name','course']
         widgets={'subject_name':forms.TextInput(attrs={'class':'form-control'}),
                  'course':forms.Select(attrs={'class':'form-control'})}
+        
+class LeaveForm(forms.Form):
+    date=forms.DateField(widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
+    reason=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    
+    
+    
+class FeedbackForm(forms.Form):
+    feedback_message=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))

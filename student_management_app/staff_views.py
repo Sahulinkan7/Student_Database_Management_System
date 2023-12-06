@@ -1,12 +1,13 @@
 from django.shortcuts import render ,HttpResponse
 from django.http import JsonResponse
-from .models import Subjects,Staffs,Sessionyearmodel,Students,Attendance,AttendanceReport
+from .models import Subjects,Staffs,Sessionyearmodel,Students,Attendance,AttendanceReport,LeaveReportStaff,FeedbackStaffs
 from .decorators import checklogindecorator2
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 import json
 from django.contrib import messages
+from .forms import LeaveForm,FeedbackForm
 
 def staff_home(request):
     return render(request,"staff/staff_home.html")
@@ -56,3 +57,44 @@ def save_attendance_data(request):
         attendance_report.save()
     messages.success(request,"attendance saved for this subject !")
     return HttpResponse("ok")
+
+
+def staff_leave(request):
+    staff_obj=Staffs.objects.get(admin=request.user.id)
+    leave_data=LeaveReportStaff.objects.filter(staff_id=staff_obj)
+    if request.method=='POST':
+        fm=LeaveForm(request.POST)
+        if fm.is_valid():
+            leave_date=fm.cleaned_data['date']
+            reason=fm.cleaned_data['reason']
+            staff_obj=Staffs.objects.get(admin=request.user.id)
+            try:
+                leave_obj=LeaveReportStaff(staff_id=staff_obj,leave_date=leave_date,leave_message=reason,leave_status=0)
+                leave_obj.save()
+                messages.success(request,f"you applied for leave on {leave_date} for reason {reason}")
+            except:
+                messages.error(request,"some error occurred !")
+    else:
+        fm=LeaveForm()
+    return render(request,"staff/staff_leave.html",{'form':fm,'leave_data':leave_data})
+
+
+def staff_feedback(request):
+    staff_obj=Staffs.objects.get(admin=request.user.id)
+    feedback_data=FeedbackStaffs.objects.filter(staff_id=staff_obj)
+    if request.method=='POST':
+        fm=FeedbackForm(request.POST)
+        if fm.is_valid():
+            feedback_msg=fm.cleaned_data['feedback_message']
+            staff_obj=Staffs.objects.get(admin=request.user.id)
+            
+            try:
+                feedback_obj=FeedbackStaffs(staff_id=staff_obj,feedback=feedback_msg,feedback_reply="")
+                feedback_obj.save()
+                fm=FeedbackForm()
+                messages.success(request,"Feedback saved successfully !")
+            except:
+                messages.error(request,"Error occured : feedback not saved")
+    else:
+        fm=FeedbackForm()
+    return render(request,"staff/staff_feedback.html",{'form':fm,'feedback_data':feedback_data})

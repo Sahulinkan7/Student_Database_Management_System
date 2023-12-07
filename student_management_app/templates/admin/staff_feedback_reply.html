@@ -1,0 +1,97 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    <h4 class="text-light">Staff Feedbacks</h4>
+{% endblock page_title %}
+
+{% block maincontent %}
+
+    <div class="table-responsive">
+        <table class="table table-hover ">
+            <thead class="table-success text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Feedback Message</th>
+                    <th>Feedback Reply</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in feedbacks %}
+                    <tr class="text-center">
+                        <td>{{feedback.id}}</td>
+                        <td>{{feedback.staff_id.admin.first_name}} {{feedback.staff_id.admin.last_name}}</td>
+                        <td>{{feedback.feedback}}</td>
+                        <td>
+                            {% if not feedback.feedback_reply %}
+                                <button type="button" class="reply_button d-inline-flex btn btn-primary" data-bs-toggle="modal" data-bs-target="#replymodal">
+                                    Reply
+                                </button>
+                            {% else %}
+                                {{feedback.feedback_reply}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="modal fade" id="replymodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Reply to  : <span id="pname"></span> </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="fw-bold">Reply message</p>
+              <textarea class="form-control" name="feedback_reply" id="feedback_reply" cols="30" rows="5"></textarea>
+              <button type="button" id="send_reply" class="form-control btn btn-primary mt-1">Send Reply</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock maincontent %}
+
+{% block custom_js %}
+      <script>
+        document.querySelectorAll(".reply_button").forEach((button)=>{
+            button.addEventListener("click",()=>{
+                let id=button.parentNode.parentNode.children[0].innerText
+                let name=button.parentNode.parentNode.children[1].innerText
+                console.log(id,name)
+                document.querySelector("#pname").innerText=name
+                document.querySelector("#send_reply").addEventListener("click",function(){
+                    feedback_reply=document.querySelector("#feedback_reply").value
+                    console.log(feedback_reply)
+                    const data={
+                        feedback_id: id,
+                        reply_message: feedback_reply
+                    }
+                    fetch('{% url 'staff_feedback_save' %}',{
+                        method: 'POST',
+                        headers:{'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    }).then(function(response){
+                        alert("Your feedback is saved !")
+                        location.reload(true) 
+                    }).catch(function(response){
+                        alert("Some error occurred ! ")
+                        location.reload(true)
+                    })
+                      
+                })
+                
+                
+            })
+        })
+      </script>
+
+
+{% endblock custom_js %}
+

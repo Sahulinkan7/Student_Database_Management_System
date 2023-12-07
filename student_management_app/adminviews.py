@@ -301,4 +301,21 @@ def save_student_feedback_reply(request):
     student_feedback_obj.save()
     print(student_feedback_obj.feedback,student_feedback_obj.feedback_reply)
     return HttpResponse("OK")
+
+login_required(login_url="/")
+checklogindecorator2(allowed_roles=["1"])
+def staff_feedback_reply(request):
+    staff_feedbacks=FeedbackStaffs.objects.all()
+    return render(request,"admin/staff_feedback_reply.html",{'feedbacks':staff_feedbacks})
+
+@csrf_exempt
+def save_staff_feedback_reply(request):
+    data=json.loads(request.body)
+    id=data['feedback_id']
+    reply_message=data['reply_message']
+    staff_feedback_obj=FeedbackStaffs.objects.get(id=id)
+    staff_feedback_obj.feedback_reply=reply_message
+    staff_feedback_obj.save()
+    print(staff_feedback_obj.feedback,staff_feedback_obj.feedback_reply)
+    return HttpResponse("OK")
     

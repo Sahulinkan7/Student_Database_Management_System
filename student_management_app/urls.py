@@ -25,5 +25,7 @@ urlpatterns = [
     path("view_my_attendance/",student_views.show_my_attendance,name="student_view_attendance"),
     path("student_leave_apply",student_views.student_leave,name="student_leave_apply"),
     path("student_feedback/",student_views.student_feedback,name="student_feedback"),
+    path("student_feedback_reply/",adminviews.student_feedback_reply,name="student_feedback_reply"),
+    path("student_feedback_reply_save/",adminviews.save_student_feedback_reply,name="student_feedback_save"),
     path("logout/",views.logout_view,name="logout"),
 ]

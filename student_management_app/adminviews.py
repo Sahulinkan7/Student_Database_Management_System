@@ -4,15 +4,17 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render,HttpResponseRedirect
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from .forms import ( AddstaffForm,AddCourseForm,AddStudentForm,AddSubjectForm,EditStaffForm,EditStudentForm,
                     EditCourseForm,EditSubjectForm,AddSessionForm)
-from .models import CustomUser,Courses,Subjects,Staffs,Students,Sessionyearmodel
+from .models import CustomUser,Courses,Subjects,Staffs,Students,Sessionyearmodel,FeedbackStudent,FeedbackStaffs
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.urls import reverse
 from .decorators import checklogindecorator,checklogindecorator2
 from django.utils.decorators import method_decorator
+import json
 
 
 @login_required(login_url="/")
@@ -282,3 +284,21 @@ class manage_subjects_view(ListView):
         context= super().get_context_data(**kwargs)
         context['subject_count']=Subjects.objects.all().count()
         return context
+    
+login_required(login_url="/")
+checklogindecorator2(allowed_roles=["1"])
+def student_feedback_reply(request):
+    student_feedbacks=FeedbackStudent.objects.all()
+    return render(request,"admin/student_feedback_reply.html",{'feedbacks':student_feedbacks})
+
+@csrf_exempt
+def save_student_feedback_reply(request):
+    data=json.loads(request.body)
+    id=data['feedback_id']
+    reply_message=data['reply_message']
+    student_feedback_obj=FeedbackStudent.objects.get(id=id)
+    student_feedback_obj.feedback_reply=reply_message
+    student_feedback_obj.save()
+    print(student_feedback_obj.feedback,student_feedback_obj.feedback_reply)
+    return HttpResponse("OK")
+    

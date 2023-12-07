@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from .forms import ( AddstaffForm,AddCourseForm,AddStudentForm,AddSubjectForm,EditStaffForm,EditStudentForm,
                     EditCourseForm,EditSubjectForm,AddSessionForm)
-from .models import CustomUser,Courses,Subjects,Staffs,Students,Sessionyearmodel,FeedbackStudent,FeedbackStaffs
+from .models import CustomUser,Courses,Subjects,Staffs,Students,Sessionyearmodel,FeedbackStudent,FeedbackStaffs,LeaveReportStudent
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.urls import reverse
@@ -319,3 +319,25 @@ def save_staff_feedback_reply(request):
     print(staff_feedback_obj.feedback,staff_feedback_obj.feedback_reply)
     return HttpResponse("OK")
     
+
+@method_decorator(login_required(login_url="/"),name='dispatch')
+@method_decorator(checklogindecorator2(allowed_roles=["1"]),name='dispatch')
+class Student_leaves(ListView):
+    template_name="admin/student_leaves.html"
+    model=LeaveReportStudent
+
+login_required(login_url="/")
+checklogindecorator2(allowed_roles=["1"])    
+def student_leave_approve(request,id):
+    leave_obj=LeaveReportStudent.objects.get(id=id)
+    leave_obj.leave_status=1
+    leave_obj.save()
+    messages.success(request,f"Approved leave for leave id {leave_obj.id}")
+    return HttpResponseRedirect(reverse("student_leaves_view"))
+
+def student_leave_reject(request,id):
+    leave_obj=LeaveReportStudent.objects.get(id=id)
+    leave_obj.leave_status=2
+    leave_obj.save()
+    messages.warning(request,f"Rejected leave for leave id {leave_obj.id}")
+    return HttpResponseRedirect(reverse("student_leaves_view"))

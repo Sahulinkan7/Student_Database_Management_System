@@ -41,6 +41,8 @@ def get_students(request):
     return JsonResponse(json.dumps(student_list),content_type="application/json",safe=False)
 
 @csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
 def save_attendance_data(request):
     data2=json.loads(request.body)
     subject_id=data2['subject_id']
@@ -58,7 +60,8 @@ def save_attendance_data(request):
     messages.success(request,"attendance saved for this subject !")
     return HttpResponse("ok")
 
-
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
 def staff_leave(request):
     staff_obj=Staffs.objects.get(admin=request.user.id)
     leave_data=LeaveReportStaff.objects.filter(staff_id=staff_obj)
@@ -71,6 +74,7 @@ def staff_leave(request):
             try:
                 leave_obj=LeaveReportStaff(staff_id=staff_obj,leave_date=leave_date,leave_message=reason,leave_status=0)
                 leave_obj.save()
+                fm=LeaveForm()
                 messages.success(request,f"you applied for leave on {leave_date} for reason {reason}")
             except:
                 messages.error(request,"some error occurred !")
@@ -78,7 +82,8 @@ def staff_leave(request):
         fm=LeaveForm()
     return render(request,"staff/staff_leave.html",{'form':fm,'leave_data':leave_data})
 
-
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
 def staff_feedback(request):
     staff_obj=Staffs.objects.get(admin=request.user.id)
     feedback_data=FeedbackStaffs.objects.filter(staff_id=staff_obj)

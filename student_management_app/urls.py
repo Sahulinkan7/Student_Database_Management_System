@@ -23,5 +23,7 @@ urlpatterns = [
     path("staff_leave_apply",staff_views.staff_leave,name="staff_leave_apply"),
     path("staff_feedback/",staff_views.staff_feedback,name="staff_feedback"),
     path("view_my_attendance/",student_views.show_my_attendance,name="student_view_attendance"),
+    path("student_leave_apply",student_views.student_leave,name="student_leave_apply"),
+    path("student_feedback/",student_views.student_feedback,name="student_feedback"),
     path("logout/",views.logout_view,name="logout"),
 ]

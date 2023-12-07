@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms 
-from.models import Courses,Staffs,CustomUser,Students,Subjects,Sessionyearmodel
+from.models import Courses,Staffs,CustomUser,Students,Subjects,Sessionyearmodel,LeaveReportStudent
 
 def bring_course():
     try:  
@@ -129,6 +129,7 @@ class EditSubjectForm(forms.ModelForm):
 class LeaveForm(forms.Form):
     date=forms.DateField(widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
     reason=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))
+        
     
 class FeedbackForm(forms.Form):
     feedback_message=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','rows':4}))

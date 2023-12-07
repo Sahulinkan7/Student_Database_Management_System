@@ -1,7 +1,10 @@
 from django.shortcuts import render 
-from .forms import AttendanceCheckForm
-from .models import Courses,Subjects,Students,Attendance,AttendanceReport
+from .forms import AttendanceCheckForm,FeedbackForm,LeaveForm
+from .models import Courses,Subjects,Students,Attendance,AttendanceReport,FeedbackStudent,LeaveReportStudent
 from django.contrib import messages
+from .decorators import checklogindecorator2
+from django.contrib.auth.decorators import login_required
+from django import forms 
 
 def subjectchoicelist(course):
     subjects=Subjects.objects.filter(course=course)
@@ -10,10 +13,11 @@ def subjectchoicelist(course):
         choice_list.append((i.id,i.subject_name))
     return choice_list
 
-
+@checklogindecorator2(allowed_roles=['3'])
 def student_home(request):
     return render(request,"student/student_home.html")
 
+@checklogindecorator2(allowed_roles=['3'])
 def show_my_attendance(request):
     student=Students.objects.get(admin=request.user.id)
     course=student.course
@@ -35,5 +39,55 @@ def show_my_attendance(request):
     else:
         fm=AttendanceCheckForm()
     fm.fields['subject'].choices=choice_list
-    print("st : ",attendance_reports)
     return render(request,"student/my_attendance.html",{'form':fm,'attendance_reports':attendance_reports})
+
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['3'])
+def student_feedback(request):
+    student_obj=Students.objects.get(admin=request.user.id)
+    feedback_data=FeedbackStudent.objects.filter(student_id=student_obj)
+    if request.method=='POST':
+        fm=FeedbackForm(request.POST)
+        if fm.is_valid():
+            feedback_msg=fm.cleaned_data['feedback_message']
+            student_obj=Students.objects.get(admin=request.user.id)
+            
+            try:
+                feedback_obj=FeedbackStudent(student_id=student_obj,feedback=feedback_msg,feedback_reply="")
+                feedback_obj.save()
+                fm=FeedbackForm()
+                messages.success(request,"Feedback saved successfully !")
+            except:
+                messages.error(request,"Error occured : feedback not saved")
+    else:
+        fm=FeedbackForm()
+    return render(request,"student/student_feedback.html",{'form':fm,'feedback_data':feedback_data})
+
+
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['3'])
+def student_leave(request):
+    student_obj=Students.objects.get(admin=request.user.id)
+    leave_data=LeaveReportStudent.objects.filter(student_id=student_obj)
+    if request.method=='POST':
+        fm=LeaveForm(request.POST)
+        if fm.is_valid():
+            leave_date=fm.cleaned_data['date']
+            reason=fm.cleaned_data['reason']
+            student_obj=Students.objects.get(admin=request.user.id)
+            try:
+                try:
+                    applied_dates=LeaveReportStudent.objects.filter(student_id=student_obj,leave_date=leave_date)
+                    if applied_dates:
+                        raise forms.ValidationError("You have already applied leave on this date")
+                    leave_obj=LeaveReportStudent(student_id=student_obj,leave_date=leave_date,leave_message=reason,leave_status=0)
+                    leave_obj.save()
+                    fm=LeaveForm()
+                    messages.success(request,f"you applied for leave on {leave_date} for reason {reason}")
+                except:
+                    messages.error(request,"you have already applied on this date")
+            except:
+                messages.error(request,"some error occurred !")
+    else:
+        fm=LeaveForm()
+    return render(request,"student/student_leave.html",{'form':fm,'leave_data':leave_data})

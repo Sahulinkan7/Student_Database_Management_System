@@ -17,6 +17,16 @@
                 View My Attendance
             </a>            
         </li>
+        <li class="nav-item">
+            <a href="{% url 'student_leave_apply' %}" class="nav-link ps-2 {% if 'staff_leave_apply' in request.path %} active {% endif %}">
+                Apply Leave
+            </a>            
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'student_feedback' %}" class="nav-link ps-2 {% if 'staff_feedback' in request.path %} active {% endif %}">
+                Feedback
+            </a>            
+        </li>
     {% endif %}
     {% if request.user.user_type == '2' %}
         <li class="nav-item">

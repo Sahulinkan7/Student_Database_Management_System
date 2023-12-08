@@ -106,9 +106,9 @@
                         headers: {'Content-Type': 'application/json'}
                     }).then(function(response){
                         console.log(response)
-                        alert("data saved")
+                        location.reload(true)
                     }).catch(function(){
-                        alert("function error")
+                        location.reload(true)
                     })
                 })
                 output.innerHTML=div_data

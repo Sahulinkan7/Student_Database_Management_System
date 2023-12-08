@@ -19,9 +19,24 @@ def subjectchoicelist(course):
 def student_home(request):
     student_obj=Students.objects.get(admin=request.user.id)
     attendance_total=AttendanceReport.objects.filter(student_id=student_obj).count()
-    attendance_present=AttendanceReport.objects.filter(student_id=student_obj,status=True).count()
-    attendance_absent=AttendanceReport.objects.filter(student_id=student_obj,status=False).count()
-    return render(request,"student/student_home.html",{"total_attendance":attendance_total,"total_present":attendance_present,"total_absent":attendance_absent})
+    total_attendance_present=AttendanceReport.objects.filter(student_id=student_obj,status=True).count()
+    total_attendance_absent=AttendanceReport.objects.filter(student_id=student_obj,status=False).count()
+    course=student_obj.course
+    subjects_data=Subjects.objects.filter(course=course)
+    subjects_count=subjects_data.count()
+    attendance_present=[]
+    attendance_absent=[]
+    for subject in subjects_data:
+        attendance=Attendance.objects.filter(subject_id=subject)
+        attendance_present_count=AttendanceReport.objects.filter(attendance_id__in=attendance,status=True,student_id=student_obj).count()
+        attendance_absent_count=AttendanceReport.objects.filter(attendance_id__in=attendance,status=False,student_id=student_obj).count()
+        attendance_present.append(attendance_present_count)
+        attendance_absent.append(attendance_absent_count)
+        
+    context={"total_attendance":attendance_total,"total_present":total_attendance_present,
+             "total_absent":total_attendance_absent,"subjects_count":subjects_count,"subjects":subjects_data,
+             "attendance_present_count":attendance_present,"attendance_absent_count":attendance_absent}
+    return render(request,"student/student_home.html",context)
 
 @login_required(login_url="/")
 @checklogindecorator2(allowed_roles=['3'])

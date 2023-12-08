@@ -44,10 +44,56 @@
         <div class="col-sm-3">
             <div class="card  bg-warning shadow">
                 <div class="card-body">
-                    <h3 class="text-light">5</h3>
+                    <h3 class="text-light">{{subjects_count}}</h3>
                     <p  class="text-light">Total Subjects</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-title bg-danger">
+                    <h4 class="text-center text-light">Attendance Statistics</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="mychart"></canvas>
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-6">
+            <h3 class="text-center text-light">Notification</h3>
+        </div>
+    </div>
 {% endblock maincontent %}
+
+{% block custom_js %}
+
+    <script>
+        const ctx=document.getElementById("mychart")
+        
+        const mychart = new Chart(ctx,{
+            type:"bar",
+            data:{
+                labels:[{% for subject in subjects %} '{{subject.subject_name}}', {% endfor %}],
+                datasets:[{
+                    data:[{% for attendance in attendance_present_count %} '{{attendance}}',{% endfor %}],
+                    label:"present",
+                    backgroundColor:['green']
+                },
+                {
+                    data:[{% for attendance in attendance_absent_count %} '{{attendance}}',{% endfor %}],
+                    label:"absent",
+                    backgroundColor:['red']
+                }
+                ],
+            },
+            
+        })
+    </script>
+
+{% endblock custom_js %}
+
+

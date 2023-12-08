@@ -51,13 +51,18 @@ def save_attendance_data(request):
     session_year_id=data2['session_year_id']
     subject_model=Subjects.objects.get(id=subject_id)
     session_model=Sessionyearmodel.objects.get(id=session_year_id)
-    attendance=Attendance(subject_id=subject_model,attendance_date=attendance_date,session_year=session_model)
-    attendance.save()
-    for student in students_ids:
-        stu = Students.objects.get(admin=student['id'])
-        attendance_report=AttendanceReport(student_id=stu,attendance_id=attendance,status=student['status'])
-        attendance_report.save()
-    messages.success(request,"attendance saved for this subject !")
+    attendance_obj=Attendance.objects.filter(subject_id=subject_model,attendance_date=attendance_date,session_year=session_model)
+    if attendance_obj:
+        print("already taken for this ")
+        messages.error(request,"Error : Data can not be saved ! Attendance already taken for this subject on this date")
+    else:
+        attendance=Attendance(subject_id=subject_model,attendance_date=attendance_date,session_year=session_model)
+        attendance.save()
+        for student in students_ids:
+            stu = Students.objects.get(admin=student['id'])
+            attendance_report=AttendanceReport(student_id=stu,attendance_id=attendance,status=student['status'])
+            attendance_report.save()
+        messages.success(request,"attendance saved for this subject !")
     return HttpResponse("ok")
 
 @login_required(login_url="/")

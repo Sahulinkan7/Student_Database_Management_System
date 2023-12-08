@@ -4,6 +4,7 @@ from . import views,adminviews,staff_views,student_views
 urlpatterns = [
     path("",views.login_view,name="login_view"),
     path("dashboard_view/",views.dashboard_view,name="dashboard_view"),
+    path("student_home/",student_views.student_home,name="student_home"),
     path("addstudent/",adminviews.add_student_view,name="add_student"),
     path("manage_students/",adminviews.manage_students_view.as_view(),name="manage_students"),
     path("edit_student/<int:pk>/",adminviews.edit_student_view,name="edit_student"),
@@ -32,5 +33,8 @@ urlpatterns = [
     path("student_leaves_view",adminviews.Student_leaves.as_view(),name="student_leaves_view"),
     path("student_leaves_approve/<int:id>/",adminviews.student_leave_approve,name="student_leaves_approve"),
     path("student_leaves_reject/<int:id>/",adminviews.student_leave_reject,name="student_leaves_reject"),
+    path("staff_leaves_view",adminviews.Staff_leaves.as_view(),name="staff_leaves_view"),
+    path("staff_leaves_approve/<int:id>/",adminviews.staff_leave_approve,name="staff_leaves_approve"),
+    path("staff_leaves_reject/<int:id>/",adminviews.staff_leave_reject,name="staff_leaves_reject"),
     path("logout/",views.logout_view,name="logout"),
 ]

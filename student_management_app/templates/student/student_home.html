@@ -1,5 +1,9 @@
 {% extends "core/base.html" %}
 
+{% block page_title %}
+    <h3 class="text-light">Student Dashboard </h3>
+{% endblock page_title %}
+
 {% block maincontent %}
 
     {% if messages %}
@@ -11,7 +15,39 @@
 
     {% endfor %}
     {% endif %}
-
-    <h2>Student home page </h2>
-
+    <hr class="border-light">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card bg-primary shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{total_attendance}}</h3>
+                    <p  class="text-light">Total Attendance</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card bg-success shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{total_present}}</h3>
+                    <p  class="text-light">Total Present</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card bg-danger shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{total_absent}}</h3>
+                    <p  class="text-light">Total Absent</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card  bg-warning shadow">
+                <div class="card-body">
+                    <h3 class="text-light">5</h3>
+                    <p  class="text-light">Total Subjects</p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock maincontent %}

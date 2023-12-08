@@ -60,7 +60,7 @@
                                 <td>{{leave.leave_message}}</td>
                                 <td>
                                     {% if leave.leave_status == 2 %}
-                                        <span class="d-inline-flex alert-danger">Rejected</span>
+                                        <span class="d-inline-flex px-1 bg-danger text-light">Rejected</span>
                                     {% elif leave.leave_status == 1 %}
                                         <span class="d-inline-flex bg-success px-1 text-light">Approved</span>
                                     {% else %}

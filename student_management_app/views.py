@@ -39,7 +39,7 @@ def dashboard_view(request):
     if request.user.user_type=='2':
         return render(request,"staff/staff_home.html")
     if request.user.user_type=='3':
-        return render(request,"student/student_home.html")
+        return HttpResponseRedirect(reverse("student_home"))
     
 def logout_view(request):
     logout(request)

@@ -13,10 +13,17 @@ def subjectchoicelist(course):
         choice_list.append((i.id,i.subject_name))
     return choice_list
 
+
+@login_required(login_url="/")
 @checklogindecorator2(allowed_roles=['3'])
 def student_home(request):
-    return render(request,"student/student_home.html")
+    student_obj=Students.objects.get(admin=request.user.id)
+    attendance_total=AttendanceReport.objects.filter(student_id=student_obj).count()
+    attendance_present=AttendanceReport.objects.filter(student_id=student_obj,status=True).count()
+    attendance_absent=AttendanceReport.objects.filter(student_id=student_obj,status=False).count()
+    return render(request,"student/student_home.html",{"total_attendance":attendance_total,"total_present":attendance_present,"total_absent":attendance_absent})
 
+@login_required(login_url="/")
 @checklogindecorator2(allowed_roles=['3'])
 def show_my_attendance(request):
     student=Students.objects.get(admin=request.user.id)

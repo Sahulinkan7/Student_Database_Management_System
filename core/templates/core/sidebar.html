@@ -106,7 +106,7 @@
             </div>
             <div class="collapse" id="LeaveCollapse">
                 <a href="{% url 'student_leaves_view' %}" class="nav-link ps-2 {% if '/student_leaves_view/' in request.path %} active {% endif %}">Student Leave</a>
-                <a href="" class="nav-link ps-2 ">Staff Leave</a>
+                <a href="{% url 'staff_leaves_view' %}" class="nav-link ps-2 ">Staff Leave</a>
             </div>
         </li>
         <li class="nav-item">

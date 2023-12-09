@@ -1,6 +1,6 @@
 from django.shortcuts import render ,HttpResponse
 from django.http import JsonResponse
-from .models import Subjects,Staffs,Sessionyearmodel,Students,Attendance,AttendanceReport,LeaveReportStaff,FeedbackStaffs
+from .models import Subjects,Staffs,Sessionyearmodel,Courses,Students,Attendance,AttendanceReport,LeaveReportStaff,FeedbackStaffs
 from .decorators import checklogindecorator2
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -47,6 +47,7 @@ def save_attendance_data(request):
     data2=json.loads(request.body)
     subject_id=data2['subject_id']
     attendance_date=data2['attendance_date']
+    print("attendance_date is ",attendance_date)
     students_ids=data2['students_ids']
     session_year_id=data2['session_year_id']
     subject_model=Subjects.objects.get(id=subject_id)
@@ -64,6 +65,15 @@ def save_attendance_data(request):
             attendance_report.save()
         messages.success(request,"attendance saved for this subject !")
     return HttpResponse("ok")
+
+
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def view_update_attendance(request):
+    subjects=Subjects.objects.filter(staff=request.user.id)
+    sessions=Sessionyearmodel.objects.all()
+    courses=Courses.objects.all()
+    return render(request,"staff/view_update_attendance.html",{"subjects":subjects,"sessions":sessions,"courses":courses})
 
 @login_required(login_url="/")
 @checklogindecorator2(allowed_roles=['2'])
@@ -108,3 +118,58 @@ def staff_feedback(request):
     else:
         fm=FeedbackForm()
     return render(request,"staff/staff_feedback.html",{'form':fm,'feedback_data':feedback_data})
+
+
+@csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def get_subjects(request):
+    data=json.loads(request.body)
+    print(data)
+    course=data["course"]
+    print("course",course)
+    course=Courses.objects.get(id=course)
+    subjects=Subjects.objects.filter(course=course,staff=request.user.id)
+    subjects_data=serializers.serialize("python",subjects)
+    subjects_list=[]
+    for subject in subjects:
+        subject_data={"id":subject.id,"subject_name":subject.subject_name}
+        subjects_list.append(subject_data)
+    return JsonResponse(json.dumps(subjects_list),content_type="application/json",safe=False)
+
+@csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def get_attendance_dates(request):
+    data=json.loads(request.body)
+    course=data['course']
+    subject_id=data['subject']
+    session=data['session']
+    subject=Subjects.objects.get(id=subject_id)
+    session_year=Sessionyearmodel.objects.get(id=session)
+    attendance_objects=Attendance.objects.filter(subject_id=subject,session_year=session_year)
+    attendance_objects_data=serializers.serialize("python",attendance_objects)
+    dates_list=[]
+    for obj in attendance_objects:
+        date_obj={'id':obj.id,'date':str(obj.attendance_date)}
+        dates_list.append(date_obj)
+    print(data)
+    print(dates_list)
+    return JsonResponse(json.dumps(dates_list),content_type="application/json",safe=False)
+
+@csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def get_attendance_data(request):
+    data=json.loads(request.body)
+    attendance_id=data['attendance_date_id']
+    attendance_obj=Attendance.objects.get(id=attendance_id)
+    attendance_objects=AttendanceReport.objects.filter(attendance_id=attendance_obj)
+    list_data=[]
+    for attendance_data in attendance_objects:
+        data_individual={'id':attendance_data.student_id.admin.id,"name":attendance_data.student_id.admin.first_name,"status":attendance_data.status}
+        list_data.append(data_individual)
+    print(list_data)
+    return JsonResponse(json.dumps(list_data),content_type="application/json",safe=False)
+    
+    

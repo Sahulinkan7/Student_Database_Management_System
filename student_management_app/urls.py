@@ -19,6 +19,7 @@ urlpatterns = [
     path("edit_subject/<int:subject_id>/",adminviews.edit_subject_view,name="edit_subject"),
     path("manage_sessions/",adminviews.manage_session_view.as_view(),name="manage_sessions"),
     path("take_student_attendance/",staff_views.take_attendance,name="take_student_attendance"),
+    path("view_update_attendance/",staff_views.view_update_attendance,name="view_update_attendance"),
     path("get_students/",staff_views.get_students,name="get_students"),
     path("save_student_attendance/",staff_views.save_attendance_data,name="save_student_attendance"),
     path("staff_leave_apply",staff_views.staff_leave,name="staff_leave_apply"),
@@ -36,5 +37,8 @@ urlpatterns = [
     path("staff_leaves_view",adminviews.Staff_leaves.as_view(),name="staff_leaves_view"),
     path("staff_leaves_approve/<int:id>/",adminviews.staff_leave_approve,name="staff_leaves_approve"),
     path("staff_leaves_reject/<int:id>/",adminviews.staff_leave_reject,name="staff_leaves_reject"),
+    path("get_subjects/",staff_views.get_subjects,name="get_subjects"),
+    path("get_attendance_dates/",staff_views.get_attendance_dates,name="get_attendance_dates"),
+    path("get_attendance_data/",staff_views.get_attendance_data,name="get_attendance_data"),
     path("logout/",views.logout_view,name="logout"),
 ]

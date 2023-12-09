@@ -1,0 +1,176 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    <h4 class="text-light">View and Update Attendance</h4>
+{% endblock page_title %}
+
+
+{% block maincontent %}
+
+    <div class="card p-2 m-2 mt-0">
+        <div class="card-title bg-success">
+            <h4 class="text-light text-center">View Attendance</h4>
+        </div>
+        <div class="card-body">
+            <form action="">
+                {% csrf_token %}
+                <label for="id_course">Courses</label>
+                <select name="course" id="id_course" class="form-control">
+                    <option value="">select course</option>
+                    {% for course in courses %}
+                        <option value="{{course.id}}">{{course.course_name}}</option>
+                    {% endfor %}
+                </select>
+                <label for="id_subject">Subjects</label>
+                <select name="subject" id="id_subject" class="form-control">
+                    <option value="">select subject</option>
+                </select>
+
+                <label for="id_session">Session</label>
+                <select name="session" id="id_session" class="form-control">
+                    <option value="">select session</option>
+                    {% for session in sessions %}
+                        <option value="{{session.id}}">{{session.session_start_year}} TO {{session.session_end_year}}</option>
+                    {% endfor %}
+                </select>
+                <label for="id_attendance_date">Attendance Date</label>
+                <select name="attendance_date" id="id_attendance_date" class="form-control">
+                    <option value="">select date</option>
+                </select>
+                <button type="button" id="id_fetch_attendance"  class="form-control btn btn-primary mt-2">Fetch Attendance</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card">
+            <div class="card-body" id="id_students_card">
+
+            </div>
+        </div>
+    </div>
+
+{% endblock maincontent %}
+
+{% block custom_js %}
+
+<script>
+    document.querySelector("#id_course").addEventListener("change",function(){
+        const course_id=document.querySelector("#id_course").value
+        data={
+            course:course_id
+        }
+        
+        fetch('{% url 'get_subjects' %}',{
+            method: "POST",
+            body:JSON.stringify(data),
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(function(response){
+            return response.json()
+        })
+        .then(function(response){
+            return JSON.parse(response)
+        })
+        .then(function(response){
+            let k=document.querySelector("#id_subject")
+            for(let i=0;i<k.options.length;i++)
+            {
+                document.querySelector('#id_subject').removeChild(k.lastChild)
+            }
+            response.forEach((element)=>{
+                var optelement=document.createElement("option")
+                optelement.text=element['subject_name']
+                optelement.value=element['id']
+                document.querySelector("#id_subject").appendChild(optelement)
+            });
+        })
+        .cath(function(response){
+            alert("failed to fetch subject")
+        });
+    })
+
+    document.querySelector("#id_session").addEventListener("change",function(){
+        const course_id=document.querySelector("#id_course").value
+        const subject_id=document.querySelector("#id_subject").value
+        const session_year_id=document.querySelector("#id_session").value
+
+        console.log(course_id,subject_id)
+
+        data2={
+            course:course_id,
+            subject:subject_id,
+            session:session_year_id
+        }
+
+        fetch('{% url 'get_attendance_dates' %}',{
+            method: "POST",
+            body:JSON.stringify(data2),
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(function(response){
+            return response.json()
+        })
+        .then(function(response){
+            return JSON.parse(response)
+        })
+        .then(function(response){
+            let k=document.querySelector("#id_attendance_date")
+            for(let i=0;i<k.options.length;i++)
+            {
+                document.querySelector('#id_attendance_date').removeChild(k.lastChild)
+            }
+            response.forEach((element)=>{
+                var optelement=document.createElement("option")
+                optelement.text=element['date']
+                optelement.value=element['id']
+                document.querySelector("#id_attendance_date").appendChild(optelement)
+            });
+        })
+        .cath(function(response){
+            alert("failed to fetch subject")
+        });
+    })
+
+    document.querySelector("#id_fetch_attendance").addEventListener("click",function(){
+        const date_id=document.querySelector("#id_attendance_date").value
+        data3={
+            attendance_date_id:date_id
+        }
+        fetch('{% url 'get_attendance_data' %}',{
+            method: "POST",
+            body:JSON.stringify(data3),
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(function(response){
+            return response.json()
+        })
+        .then(function(response){
+            return JSON.parse(response)
+        })
+        .then(function(response){
+            console.log(response)
+
+            var div_data="<div class='form-group'><div class='form-group'> <div class='row'> "
+            let output=document.querySelector("#id_students_card")
+            response.forEach(function(element){
+                div_data+="<div class='col-lg-2'><div class='form-check' name='studentslist'><input type='checkbox'";
+                if(element.status)
+                {
+                    div_data+="checked='checked'";
+                }
+                else{
+                    div_data+="";
+                }
+                div_data+="class='form-check-input' name='students_data[]' value='"+element.id+"'>"+element.name+"</div></div>";
+            })
+            div_data+="</div></div>"
+            output.innerHTML=div_data
+        }).cath(function(response){
+            alert("failed fetching data")
+        })
+    })
+    
+</script>
+
+{% endblock custom_js %}

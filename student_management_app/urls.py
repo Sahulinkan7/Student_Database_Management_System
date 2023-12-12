@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views,adminviews,staff_views,student_views
+from core import views as coreviews
 
 urlpatterns = [
     path("",views.login_view,name="login_view"),
+    path("change_password/",coreviews.changepassword,name="change_password"),
     path("dashboard_view/",views.dashboard_view,name="dashboard_view"),
     path("admin_home/",adminviews.admin_home,name="admin_home"),
     path("student_home/",student_views.student_home,name="student_home"),

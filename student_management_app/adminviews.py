@@ -7,15 +7,63 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from .forms import ( AddstaffForm,AddCourseForm,AddStudentForm,AddSubjectForm,EditStaffForm,EditStudentForm,
-                    EditCourseForm,EditSubjectForm,AddSessionForm)
+                    EditCourseForm,EditSubjectForm,AddSessionForm,ExaminationForm)
 from .models import ( CustomUser,Courses,Subjects,Staffs,Students,Sessionyearmodel,FeedbackStudent,FeedbackStaffs,
-                    LeaveReportStudent , LeaveReportStaff)
+                    LeaveReportStudent , LeaveReportStaff,Examination,CourseExam)
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.urls import reverse
 from .decorators import checklogindecorator,checklogindecorator2
 from django.utils.decorators import method_decorator
 import json
+
+@login_required(login_url="/")
+@checklogindecorator
+def admin_home(request):
+    total_subjects=Subjects.objects.all().count()
+    total_courses=Courses.objects.all().count()
+    total_staffs=Staffs.objects.all().count()
+    total_students=Students.objects.all().count()
+    context={"total_subjects":total_subjects,"total_courses":total_courses,"total_staffs":total_staffs,"total_students":total_students}
+    return render(request,"admin/admin_home.html",context)
+
+@login_required(login_url="/")
+@checklogindecorator
+def addnewExam(request):
+    if request.method=='POST':
+        fm=ExaminationForm(request.POST)
+        if fm.is_valid():
+            fm.save()
+            messages.success(request,"New Examination created")
+    else:
+        fm=ExaminationForm()
+    exams=Examination.objects.all()
+    courses=Courses.objects.all()
+    sessions=Sessionyearmodel.objects.all()
+    exammodels=CourseExam.objects.all()
+    return render(request,"admin/add_exam.html",{'form':fm,"exams":exams,"courses":courses,"sessions":sessions,"courseexams":exammodels})
+
+@csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator
+def create_examination(request):
+    data=json.loads(request.body)
+    session_id=data['session']
+    course_id=data['course']
+    exam_id=data['exam']
+    course_obj=Courses.objects.get(id=course_id)
+    exam_obj=Examination.objects.get(id=exam_id)
+    session_obj=Sessionyearmodel.objects.get(id=session_id)
+    this_model=CourseExam.objects.filter(exam=exam_obj,session=session_obj,course=course_obj)
+    if not this_model:
+        course_exam_model=CourseExam(exam=exam_obj,session=session_obj,course=course_obj)
+        course_exam_model.save()
+        messages.success(request,"new exam model created")
+        return HttpResponse("OK")
+    else:
+        messages.error(request,"same exam already scheduled for this course and session")
+        return HttpResponse('ok')
+        
 
 
 @login_required(login_url="/")

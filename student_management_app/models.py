@@ -160,8 +160,34 @@ class NotificationStaffs(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     objects=models.Manager()
-        
-        
+    
+class Examination(models.Model):
+    id=models.AutoField(primary_key=True)
+    exam_name=models.CharField(unique=True,max_length=100)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    objects=models.Manager()
+    
+class CourseExam(models.Model):
+    id=models.AutoField(primary_key=True)
+    exam=models.ForeignKey(Examination,on_delete=models.DO_NOTHING)
+    course=models.ForeignKey(Courses,on_delete=models.CASCADE)
+    session=models.ForeignKey(Sessionyearmodel,on_delete=models.DO_NOTHING)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    objects=models.Manager()
+    
+class ExamResult(models.Model):
+    id=models.AutoField(primary_key=True)
+    course_exam=models.ForeignKey(CourseExam,on_delete=models.CASCADE)
+    student_id=models.ForeignKey(Students,on_delete=models.CASCADE,default="")
+    subject=models.ForeignKey(Subjects,on_delete=models.CASCADE)
+    subject_exam_mark=models.FloatField(default=0)
+    subject_assignment_mark=models.FloatField(default=0)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    objects=models.Manager()
+    
 @receiver(post_save,sender=CustomUser)
 def create_user_profile(sender,instance,created,**kwargs):
     if created:

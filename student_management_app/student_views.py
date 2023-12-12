@@ -1,6 +1,6 @@
 from django.shortcuts import render 
 from .forms import AttendanceCheckForm,FeedbackForm,LeaveForm
-from .models import Courses,Subjects,Students,Attendance,AttendanceReport,FeedbackStudent,LeaveReportStudent
+from .models import Courses,Subjects,Students,Attendance,AttendanceReport,FeedbackStudent,LeaveReportStudent,CourseExam,ExamResult
 from django.contrib import messages
 from .decorators import checklogindecorator2
 from django.contrib.auth.decorators import login_required
@@ -113,3 +113,19 @@ def student_leave(request):
     else:
         fm=LeaveForm()
     return render(request,"student/student_leave.html",{'form':fm,'leave_data':leave_data})
+
+
+def exam_result(request):
+    if request.method=='POST':
+        exam_id=request.POST.get("exam")
+        student=Students.objects.get(admin=request.user.id)
+        exam=CourseExam.objects.get(id=exam_id)
+        result=ExamResult.objects.filter(student_id=student,course_exam=exam)
+        messages.success(request,"result found")
+    else:
+        result=None
+    student=Students.objects.get(admin=request.user.id)
+    course=student.course
+    session=student.session_year
+    exams=CourseExam.objects.filter(course=course,session=session)
+    return render(request,"student/view_result.html",{"exams":exams,"results":result})

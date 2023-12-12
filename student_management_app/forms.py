@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms 
-from.models import Courses,Staffs,CustomUser,Students,Subjects,Sessionyearmodel,LeaveReportStudent
+from.models import Courses,Staffs,CustomUser,Students,Subjects,Sessionyearmodel,LeaveReportStudent,Examination
 
 def bring_course():
     try:  
@@ -141,3 +141,8 @@ class AttendanceCheckForm(forms.Form):
     subject=forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control form-control-sm'}))
     
     
+class ExaminationForm(forms.ModelForm):
+    class Meta:
+        model=Examination
+        fields="__all__"
+        widgets={'exam_name':forms.TextInput(attrs={'class':'form-control'})}

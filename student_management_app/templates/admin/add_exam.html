@@ -1,0 +1,149 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    <h4 class="text-light">Schedule new Exam</h4>
+{% endblock page_title %}
+
+{% block maincontent %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-primary alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        {% endfor %}
+    {% endif %}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card mt-0 m-3 p-2">
+            <div class="card-title bg-success">
+                <h4 class="text-light text-center">Add new Exam</h4>
+            </div>
+            <div class="card-body">
+                <form action="" method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {{field.label_tag}} <span class="errors">{{field.errors|striptags}}</span>
+                        {{field}}
+                    {% endfor %}
+                    <input type="submit" value="Save new Exam Name" class="btn btn-primary form-control mt-2">
+                    {% for error in non_field_errors %}
+                        <span class="errors">{{error|striptags}}</span>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6" style="overflow-y:scroll ; height:200px;">
+        <div class="table-responsive " >
+            <table class="table table-hover">
+                <thead class="table-success">
+                    <tr class="text-center">
+                        <th>ID</th>
+                        <th>Examination Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exam in exams %}
+                        <tr class="text-center">
+                            <td>{{exam.id}}</td>
+                            <td>{{exam.exam_name}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card  mt-0 m-3 p-2">
+            <div class="card-title bg-success">
+                <h3 class="text-light text-center">Add Exam For Course</h3>
+            </div>
+            <div class="card-body ">
+                <form action="">
+                    <label for="id_exam">Examination</label>
+                    <select name="exam_name" id="id_exam" class="form-control">
+                        <option value="">select Examination</option>
+                        {% for exam in exams %}
+                            <option value="{{exam.id}}">{{exam.exam_name}}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="id_course">Select Course</label>
+                    <select name="course_name" id="id_course" class="form-control">
+                        <option value="">select Course</option>
+                        {% for course in courses %}
+                            <option value="{{course.id}}">{{course.course_name}}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="id_session">Select session</label>
+                    <select name="session" id="id_session" class="form-control">
+                        <option value="">select Session</option>
+                        {% for session in sessions %}
+                            <option value="{{session.id}}">{{session.session_start_year}} TO {{session.session_end_year}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" id="id_create_exam" class="form-control btn btn-primary mt-2">create new Exam</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-sm-6" style="overflow-y:scroll ; height:200px;">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-success">
+                    <tr>
+                        <th>ID</th>
+                        <th>Exam Name</th>
+                        <th>Exam for course</th>
+                        <th>Exam for session</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exam in courseexams %}
+                        <tr>
+                            <td>{{exam.id}}</td>
+                            <td>{{exam.exam.exam_name}}</td>
+                            <td>{{exam.course.course_name}}</td>
+                            <td>{{exam.session.session_start_year}} TO {{exam.session.session_end_year}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock maincontent %}
+
+{% block custom_js %}
+    <script>
+        document.getElementById("id_create_exam").addEventListener("click",()=>{
+            const session_id=document.getElementById("id_session").value
+            const course_id=document.getElementById("id_course").value
+            const exam_id=document.getElementById('id_exam').value
+
+            console.log(session_id,course_id,exam_id)
+            data={
+                session:session_id,
+                course:course_id,
+                exam:exam_id
+            }
+
+            fetch('{% url 'create_exam' %}',{
+                method: "POST",
+                body:JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'}
+
+            }).then(function(response){
+                location.reload(true)
+            }).catch(function(response){
+                alert("failed")
+            })
+        })
+    </script>
+{% endblock custom_js %}
+

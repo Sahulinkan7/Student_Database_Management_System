@@ -35,9 +35,9 @@ def login_view(request):
 @login_required(login_url="/")
 def dashboard_view(request):
     if request.user.user_type=='1':
-        return render(request,"admin/admin_home.html")
+        return HttpResponseRedirect(reverse("admin_home"))
     if request.user.user_type=='2':
-        return render(request,"staff/staff_home.html")
+        return HttpResponseRedirect(reverse("staff_home"))
     if request.user.user_type=='3':
         return HttpResponseRedirect(reverse("student_home"))
     

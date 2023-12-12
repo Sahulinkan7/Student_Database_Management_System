@@ -1,6 +1,6 @@
 from django.shortcuts import render ,HttpResponse
 from django.http import JsonResponse
-from .models import Subjects,Staffs,Sessionyearmodel,Courses,Students,Attendance,AttendanceReport,LeaveReportStaff,FeedbackStaffs
+from .models import Examination,ExamResult,CourseExam,Subjects,Staffs,Sessionyearmodel,Courses,CustomUser,Students,Attendance,AttendanceReport,LeaveReportStaff,FeedbackStaffs
 from .decorators import checklogindecorator2
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -10,7 +10,24 @@ from django.contrib import messages
 from .forms import LeaveForm,FeedbackForm
 
 def staff_home(request):
-    return render(request,"staff/staff_home.html")
+    mysubject_count=Subjects.objects.filter(staff=request.user.id).count()
+    staff=Staffs.objects.get(admin=request.user.id)
+    totl_leave_taken=LeaveReportStaff.objects.filter(staff_id=staff,leave_status=1).count()
+    mysubjects=Subjects.objects.filter(staff=request.user.id)
+    course_list=[]
+    for subject in mysubjects:
+        course=Courses.objects.get(id=subject.course.id)
+        course_list.append(course)
+    final_course=[]
+    for course in course_list:
+        if course not in final_course:
+            final_course.append(course)
+
+    student_count=Students.objects.filter(course__in=final_course).count()   
+    attendance_taken=Attendance.objects.filter(subject_id__in=mysubjects).count()     
+    return render(request,"staff/staff_home.html",
+                  {'mysubjects_count':mysubject_count,"total_leave_taken":totl_leave_taken,
+                   "students_under_me":student_count,"attendance_taken":attendance_taken})
 
 
 @login_required(login_url="/")
@@ -171,5 +188,72 @@ def get_attendance_data(request):
         list_data.append(data_individual)
     print(list_data)
     return JsonResponse(json.dumps(list_data),content_type="application/json",safe=False)
-    
-    
+
+
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def add_result(request):
+    if request.method=='POST':
+        exam_id=request.POST.get("exam")
+        subject_id=request.POST.get("subject")
+        student_id=request.POST.get("student")
+        exam_mark=request.POST.get("exam_mark")
+        assignment_mark=request.POST.get("assignment_mark")
+        print(exam_id,subject_id,student_id,exam_mark,assignment_mark)
+        subject_obj=Subjects.objects.get(id=subject_id)
+        student_obj=Students.objects.get(id=student_id)
+        exam_obj=CourseExam.objects.get(id=exam_id)
+        result_obj_check=ExamResult.objects.filter(subject=subject_obj,student_id=student_obj,course_exam=exam_obj)
+        if not result_obj_check:
+            try:
+                result_obj=ExamResult(subject=subject_obj,student_id=student_obj,course_exam=exam_obj,subject_exam_mark=exam_mark,subject_assignment_mark=assignment_mark)
+                result_obj.save()
+                messages.success(request,f"Student marks saved for student id : {student_id}")
+            except:
+                messages.error(request,f"Error : could not save data forstudent id :  {student_id}")
+        else:
+            messages.error(request,f"Error : already saved for student :  {student_id}")
+        
+    else:
+        pass
+    examinations=CourseExam.objects.all()
+    return render(request,"staff/add_result.html",{"exams":examinations})
+
+
+@csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def get_students_for_exam(request):
+    data=json.loads(request.body)
+    exam_id=data['exam']
+    print(exam_id)
+    exam_obj=CourseExam.objects.get(id=exam_id)
+    course=Courses.objects.get(id=exam_obj.course.id)
+    session_id=exam_obj.session
+    # staff_obj=CustomUser.objects.get(id=request.user.id)
+    # subjects=Subjects.objects.filter(course=course,staff=staff_obj)
+    students=Students.objects.filter(course=course,session_year=session_id)
+    student_list=[]
+    for student in students:
+        stu={'id':student.id,'name':str(student.admin.first_name)}
+        student_list.append(stu)
+    print(student_list)
+    return JsonResponse(json.dumps(student_list),content_type="application/json",safe=False)
+
+@csrf_exempt
+@login_required(login_url="/")
+@checklogindecorator2(allowed_roles=['2'])
+def get_subjects_for_exam(request):
+    data=json.loads(request.body)
+    exam_id=data['exam']
+    print(exam_id)
+    exam_obj=CourseExam.objects.get(id=exam_id)
+    course=Courses.objects.get(id=exam_obj.course.id)
+    staff_obj=CustomUser.objects.get(id=request.user.id)
+    subjects=Subjects.objects.filter(course=course,staff=staff_obj)
+    subject_list=[]
+    for subject in subjects:
+        sub={'id':subject.id,'name':str(subject.subject_name)}
+        subject_list.append(sub)
+    print(subject_list)
+    return JsonResponse(json.dumps(subject_list),content_type="application/json",safe=False)

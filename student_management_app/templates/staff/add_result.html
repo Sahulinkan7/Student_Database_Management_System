@@ -1,0 +1,123 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    <h4 class="text-light">Add Exam Result</h4>
+{% endblock page_title %}
+
+{% block maincontent %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-primary alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    {% endfor %}
+    {% endif %}
+    <div class="card mt-0 m-3 p-2">
+        <div class="card-title bg-success">
+            <h3 class="text-light text-center">Add Student Result</h3>
+        </div>
+        <div class="card-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                <label for="id_exam">Examination</label>
+                <select name="exam" id="id_exam" class="form-control">
+                    <option value="">select exam</option>
+                    {% for exam in exams %}
+                    <option value="{{exam.id}}">{{exam.exam.exam_name}} - {{exam.course.course_name}} - {{exam.session.session_start_year}} To {{exam.session.session_end_year}}</option>
+                    {% endfor %}
+                    
+                </select>
+                <label for="id_subject">Subject</label>
+                <select name="subject" id="id_subject" class="form-control">
+                    <option value="">select subject</option>
+                    {% for subject in subjects %}
+                        <option value="{{subject.id}}">{{subject.subject_name}}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="id_student">Student</label>
+                <select name="student" id="id_student" class="form-control">
+                    <option value="">select student</option>
+                </select>
+                <label for="id_exam_mark">Exam mark</label>
+                <input type="text" name="exam_mark" id="id_exam_mark" class="form-control">
+
+                <label for="id_assignment_mark">Assignment mark</label>
+                <input type="text" name="assignment_mark" id="id_assignment_mark" class="form-control">
+
+                <input type="submit"  value="Save Result" class="btn btn-primary form-control mt-1">
+            </form>
+        </div>
+    </div>
+
+{% endblock maincontent %}
+
+{% block custom_js %}
+    <script>
+        document.querySelector("#id_exam").addEventListener("change",function(){
+            const exam_id=document.querySelector("#id_exam").value
+            data={
+                exam:exam_id
+            }
+            fetch('{% url 'get_students_for_exam' %}',{
+                method: "POST",
+                body:JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'} 
+            }).then(function(response){
+                console.log(response)
+                return response.json()
+            })
+            .then(function(response){
+                return JSON.parse(response)
+            })
+            .then(function(response){
+                console.log(response)
+                let k=document.querySelector("#id_student")
+                for(let i=0;i<k.options.length;i++)
+                {
+                    document.querySelector('#id_student').removeChild(k.lastChild)
+                }
+                response.forEach((element)=>{
+                    var optelement=document.createElement("option")
+                    optelement.text=element['name']
+                    optelement.value=element['id']
+                    document.querySelector("#id_student").appendChild(optelement)
+                });
+            })
+            .catch(function(response){
+                alert("failed")
+            })
+
+            fetch('{% url 'get_subjects_for_exam' %}',{
+                method: "POST",
+                body:JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'} 
+            }).then(function(response){
+                console.log(response)
+                return response.json()
+            })
+            .then(function(response){
+                return JSON.parse(response)
+            })
+            .then(function(response){
+                console.log(response)
+                let k=document.querySelector("#id_subject")
+                for(let i=0;i<k.options.length;i++)
+                {
+                    document.querySelector('#id_subject').removeChild(k.lastChild)
+                }
+                response.forEach((element)=>{
+                    var optelement=document.createElement("option")
+                    optelement.text=element['name']
+                    optelement.value=element['id']
+                    document.querySelector("#id_subject").appendChild(optelement)
+                });
+            })
+            .catch(function(response){
+                alert("failed")
+            })
+        })
+    </script>
+{% endblock custom_js %}

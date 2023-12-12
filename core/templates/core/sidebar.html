@@ -27,6 +27,11 @@
                 Feedback
             </a>            
         </li>
+        <li class="nav-item">
+            <a href="{% url 'student_exam_result' %}" class="nav-link ps-2 {% if 'student_exam_result' in request.path %} active {% endif %}">
+                View Result
+            </a>            
+        </li>
     {% endif %}
     {% if request.user.user_type == '2' %}
         <li class="nav-item">
@@ -50,6 +55,11 @@
                 Feedback
             </a>            
         </li>
+        <li class="nav-item">
+            <a href="{% url 'add_result' %}" class="nav-link ps-2 {% if 'add_result' in request.path %} active {% endif %}">
+                Add Result
+            </a>            
+        </li>
     {% endif %}
     {% if request.user.user_type == '1' %}
         
@@ -58,7 +68,17 @@
                 Add Course
             </a> 
         </li>
-        
+        <li class="nav-item">
+            <div class="nav-link ps-2 {% if '/add_exam/' in request.path  %} active {% endif %} {% if '/manage_students/' in request.path %} active {% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#managestudentcollapse" aria-expanded="false" aria-controls="managestudentcollapse">
+                Manage Exams <i class="fa fa-solid fa-caret-down"></i> 
+            </div>
+            <div class="collapse" id="managestudentcollapse">
+                <a href="{% url 'add_exam' %}" class="nav-link  ps-2 {% if request.path == '/add_exam/' %} active {% endif %}">
+                    Add Exam
+                </a>
+            </div>
+            
+        </li>
         <li class="nav-item">
             <a href="{% url 'manage_courses' %}" class="nav-link ps-2 {% if '/manage_courses/' in request.path %} active {% endif %}">Manage Course</a>
         </li>

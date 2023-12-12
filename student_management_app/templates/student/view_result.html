@@ -1,0 +1,78 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    <h4 class="text-light">View Result</h4>
+{% endblock page_title %}
+
+
+{% block maincontent %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-primary alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        {% endfor %}
+    {% endif %}
+<div class="row">
+    <div class="col-sm-2">
+
+    </div>
+    <div class="col-sm-8">
+        <div class="card mt-0 m-2 p-2">
+            <div class="card-title bg-danger">
+                <h4 class="text-light text-center">Exam Result</h4>
+            </div>
+            <div class="card-body">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <select name="exam" id="" class="form-control">
+                        {% for exam in exams %}
+                            <option value="{{exam.id}}">{{exam.exam.exam_name}} {{exam.course.course_name}} {{exam.session.session_start_year}} TO {{exam.session.session_end_year}}</option>
+                        {% endfor %}
+                        
+                    </select>
+                    <input type="submit" class="btn btn-danger form-control mt-1" value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        
+    </div>
+</div>
+
+{% if results %}
+<div class="row">
+    <div class="col mx-5">
+        <table class="table-hover table">
+            <thead class="table-danger">
+                <tr>
+                    <th>ID</th>
+                    <th>Subject</th>
+                    <th>Exam Score</th>
+                    <th>Assignment Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in results %}
+                    <tr>
+                        <td>{{res.id}}</td>
+                        <td>{{res.subject.subject_name}}</td>
+                        <td>{{res.subject_exam_mark}}</td>
+                        <td>{{res.subject_assignment_mark}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+    <h4 class="text-center text-light bg-danger p-3">No result Found</h4>
+{% endif %}
+
+    
+{% endblock maincontent %}
+
+

@@ -1,5 +1,10 @@
 {% extends "core/base.html" %}
 
+{% block page_title %}
+    <h4 class="text-light">Staff Home</h4>
+
+{% endblock page_title %}
+
 {% block maincontent %}
     {% if messages %}
     {% for message in messages %}
@@ -10,6 +15,42 @@
 
     {% endfor %}
     {% endif %}
-    <h2>Staff home page </h2>
+
+    <hr class="border-light">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card bg-primary shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{students_under_me}}</h3>
+                    <p  class="text-light">Students under me</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card bg-success shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{mysubjects_count}}</h3>
+                    <p  class="text-light">My Subject count</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card bg-danger shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{total_leave_taken}}</h3>
+                    <p  class="text-light">Total Leave Taken</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card  bg-warning shadow">
+                <div class="card-body">
+                    <h3 class="text-light">{{attendance_taken}}</h3>
+                    <p  class="text-light">Attendance_taken</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock maincontent %}
